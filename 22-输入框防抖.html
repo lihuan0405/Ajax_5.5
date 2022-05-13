@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>淘宝搜索</title>
+    <script src="jquery.min.js"> </script>
+    <!-- 导入模板引擎 -->
+    <script src="template-web.js"></script>
+    <style>
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" id="ipt">搜一搜
+    <ul></ul>
+
+    <!--  4.1  使用模板引擎  -->
+    <script type="text/html" id="tpt-sug">
+       {{each result}} 
+        <li>{{$value[0]}}</li>
+       {{/each}}
+    </script>
+
+
+    <script>
+        var timer = null //  定义延时器
+        var cacheObj = {}  //  定义全局缓存对象
+
+        $('#ipt').on('keyup', function () {
+            //  5.1  用户输入的时候 清掉之前计时器
+            clearTimeout(timer)
+
+            //  1.  获取用户的输入内容  trim()去除两端空格 
+            var keywords = $(this).val().trim()
+            console.log(keywords);
+            //  2.  判断输入是否为空
+            if (keywords.length <= 0) return
+
+            //  6.  优先从缓存中获得用户搜索值得结果
+            if (cacheObj[keywords]) {
+                return renderSugList(cacheObj[keywords])
+            }
+
+            //  3. 缓存中没有  发起JSONP请求， 获取后台数据
+            // getSuggestList(keywords)
+            debounceSearch(keywords) // f防抖
+        })
+
+        function getSuggestList(kw) {
+            $.ajax({
+                url: 'https://suggest.taobao.com/sug?q=' + kw,
+                dataType: 'jsonp',
+                success: function (res) {
+
+                    //   4.  拼接字符串的方法渲染页面
+                    // console.log(res.result);
+                    // var rows = [];
+                    // $.each(res.result, function (i, item) {
+                    //     rows.push('<li>' + item[0] + '</li>')
+                    // })
+                    // $('ul').empty().append(rows.join(' '));
+
+                    renderSugList(res)
+                }
+            })
+        }
+
+        //   4.2  渲染UI结构
+        function renderSugList(res) {
+            if (res.length <= 0) {
+                return $('ul').empty().hide()
+            }
+            var htmlStr = template('tpt-sug', res)
+            // console.log(htmlStr);
+            $('ul').html(htmlStr).show()
+            //   6.  将搜索的结果保存在环迅对象中
+            var k = $('#ipt').val().trim()
+            cacheObj[k] = res //  用户的输入是键
+        }
+
+        //   5.  防抖的函数 再1000ms之后才会调getSuggestList函数
+        function debounceSearch(kw) {
+            timer = setTimeout(function () {
+                getSuggestList(kw)
+            }, 500)
+        }
+
+
+
+    </script>
+</body>
+
+</html>

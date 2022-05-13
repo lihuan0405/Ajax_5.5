@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jquery文件上传封装</title>
+    <script src="jquery.min.js"></script>
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <input type="file" id="file1">
+    <button id="btnUpload">上传文件</button><br>
+
+    <!-- bs3中的进度条样式 -->
+
+
+    <img src="" alt="" id="img1">
+
+    <script>
+        //  2.   ajaxStart 可以监听 ajax 请求
+        $(document).ajaxStart(function () {
+            // $('').show();
+            console.log('上传开始');
+        })
+
+        //   3.  ajaxStop  监听ajax结束
+        $(document).ajaxStop(function () {
+            // $('').show();
+            console.log('上传结束');
+        })
+
+        $('#btnUpload').on('click', function () {
+            var files = $('#file1')[0].files
+            if (files.length <= 0) {
+                return alert('请选择要上传的文件！')
+            }
+
+            var fd = new FormData()
+            fd.append('avatar', files[0])
+
+            //  1. jq 上传文件，发起Ajax请求
+            $.ajax({
+                method: 'post',
+                url: 'http://www.liulongbin.top:3006/api/upload/avatar',
+                data: fd,
+                //  不修改 contentType 的属性，使用FormData 默认值
+                contentType: false,
+                //   不对 FormData 中的数据进行 URL 编码
+                processData: false,
+                success: function (res) {
+                    if (res.status !== 200) return alert(' 上传失败！')
+                    $('#img1').prop('src', "http://www.liulongbin.top:3006" + res.url)
+
+                }
+            })
+
+        })
+    </script>
+</body>
+
+</html>

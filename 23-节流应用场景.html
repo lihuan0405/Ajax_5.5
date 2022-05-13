@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跟随鼠标的天使</title>
+    <script src="jquery.min.js"></script>
+    <style>
+        img {
+            /* 绝对定位不占位置 */
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="34-angel.gif" alt="" id="angle">
+    <script>
+        //  1.  JS 之前的写法
+        // var img = document.querySelector('img');
+        // // console.log(img);
+        // document.addEventListener('mousemove', function (e) {
+        //     var x = e.pageX;
+        //     var y = e.pageY;
+        //     //console.log(x, y);
+        //     img.style.left = x - 40 + 'px';
+        //     img.style.top = y - 50 + 'px';
+        // })
+
+        //   2. jQ 写法
+        var timer = null // 2.1 于心定义一个 timer 节流阀 
+        $(document).on('mousemove', function (e) {
+            //  2.2  timer不为空 证明在执行其他操作 直接返回
+            if (timer) return
+            //  2.3  如果为空  开始下一个延时器
+            timer = setTimeout(function () {
+                $('#angle').css('left', e.pageX + 'px').css('top', e.pageY + 'px')
+                //  2.4  设置效果以后， 清空 timer 节流阀，方便下次开启延时器
+                timer = null
+            }, 20)
+        })
+
+    </script>
+</body>
+
+</html>

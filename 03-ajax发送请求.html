@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>get请求数据</title>
+    <script src="jquery.min.js"></script>
+</head>
+
+<body>
+    <button id="post1">发起post请求</button>
+
+    <script>
+        $(function () {
+            $('#post1').on('click', function () {
+                $.post('http://www.liulongbin.top:3006/api/addbook', { bookname: '忍经', author: '军军', publisher: '爱心出版社' }, function (res) {
+                    console.log(res);
+                })
+            })
+        })
+    </script>
+</body>
+
+</html>

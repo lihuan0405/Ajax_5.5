@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FD上传文件</title>
+    <script src="jquery.min.js"></script>
+    <link rel="stylesheet" href="bootstrap.css">
+</head>
+
+<body>
+    <input type="file" id="file1">
+    <button id="btnUpload">上传文件</button><br>
+
+    <!-- bs3中的进度条样式 -->
+    <div class="progress" style="margin: 10px; width: 500px">
+        <div class="progress-bar progress-bar-striped active" style="width: 0%" id="percent">
+            <!-- <span class="sr-only">45% Complete</span> -->
+            45%
+        </div>
+    </div>
+
+    <img src="" alt="" id="img1">
+
+    <script>
+        $('#btnUpload').on('click', function () {
+            var files = $('#file1')[0].files
+            if (files.length <= 0) {
+                return alert('请选择要上传的文件！')
+            }
+
+            var fd = new FormData()
+            fd.append('avatar', files[0])
+
+            var xhr = new XMLHttpRequest()
+            //  2.  计算文件的上传进度
+            //  2.1 监听文件上传事件
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    var loadPersent = Math.ceil((e.loaded / e.total) * 100)
+                    $('#percent').prop('style', 'width:' + loadPersent + '%').text(loadPersent + '%')
+                }
+            }
+            //  2.2  上传成功 重新设置进度条颜色
+            xhr.upload.onload = function () {
+                $('#percent').removeClass().addClass('progress-bar progress-bar-success ')
+            }
+
+            xhr.open('POST', 'http://www.liulongbin.top:3006/api/upload/avatar')
+            xhr.send(fd)
+            xhr.onreadystatechange = function () {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    var data = JSON.parse(xhr.responseText)
+                    if (data.status === 200) { // 上传成功，将服务器返回的图片地址，设置为img标签的src属性
+                        console.log(data.url);
+                        $('#img1').prop('src', "http://www.liulongbin.top:3006" + data.url)
+
+                    } else {
+                        alert('上传失败！')
+                    }
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FD管理表单数据</title>
+    <script src="jquery.min.js"></script>
+</head>
+
+<body>
+    <form action="" id="form1">
+        用户名：<input type="text" name="uname">
+        密码：<input type="password" name="upwd">
+        <input type="submit">
+    </form>
+
+    <script>
+        // var form = document.querySelector('#form1')
+        // console.log(form);
+
+        $('#form1').on('submit', function (e) {
+            e.preventDefault()
+            // console.log($(this)[0]);
+            var fd = new FormData($(this)[0])
+            var xhr = new XMLHttpRequest()
+            xhr.open('POST', 'http://www.liulongbin.top:3006/api/formdata')
+            xhr.send(fd)
+            xhr.onreadystatechange = function () {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    var result = JSON.parse(xhr.responseText)
+                    console.log(result);
+                }
+            }
+        })
+
+    </script>
+</body>
+
+</html>
